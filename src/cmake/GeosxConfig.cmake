@@ -6,6 +6,7 @@ set( PREPROCESSOR_DEFINES ARRAY_BOUNDS_CHECK
                           FPE
                           HYPRE
                           HYPRE_CUDA
+                          LIBROM
                           MATHPRESSO
                           METIS
                           MPI
@@ -15,7 +16,7 @@ set( PREPROCESSOR_DEFINES ARRAY_BOUNDS_CHECK
                           PETSC
                           PVTPackage
                           PYGEOSX
-                          RAJA 
+                          RAJA
                           SUPERLU_DIST
                           SUITESPARSE
                           TIMERS
@@ -41,7 +42,7 @@ install( FILES ${CMAKE_BINARY_DIR}/include/common/GeosxConfig.hpp
          DESTINATION ${CMAKE_INSTALL_PREFIX}/include/common )
 
 
-function( make_full_config_file 
+function( make_full_config_file
           PREPROCESSOR_VARS )
     foreach( DEP in ${PREPROCESSOR_VARS} )
         set( USE_${DEP} TRUE )

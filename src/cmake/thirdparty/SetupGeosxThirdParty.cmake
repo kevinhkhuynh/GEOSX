@@ -4,10 +4,10 @@
 
 macro(find_and_register)
     set(singleValueArgs NAME HEADER)
-    set(multiValueArgs INCLUDE_DIRECTORIES 
+    set(multiValueArgs INCLUDE_DIRECTORIES
                        LIBRARY_DIRECTORIES
-                       LIBRARIES 
-                       EXTRA_LIBRARIES 
+                       LIBRARIES
+                       EXTRA_LIBRARIES
                        DEPENDS )
 
     ## parse the arguments
@@ -121,7 +121,7 @@ if(DEFINED HDF5_DIR)
     include(FindHDF5)
 
     # On some platforms (Summit) HDF5 lists /usr/include in it's list of include directories.
-    # When this happens you can get really opaque include errors. 
+    # When this happens you can get really opaque include errors.
     list(REMOVE_ITEM HDF5_INCLUDE_DIRS /usr/include)
 
     blt_import_library(NAME hdf5
@@ -147,11 +147,11 @@ if(DEFINED CONDUIT_DIR)
 
     set(CONDUIT_TARGETS conduit conduit_relay conduit_blueprint)
     foreach(targetName ${CONDUIT_TARGETS} )
-        get_target_property(includeDirs 
+        get_target_property(includeDirs
                             ${targetName}
                             INTERFACE_INCLUDE_DIRECTORIES)
-                             
-        set_property(TARGET ${targetName} 
+
+        set_property(TARGET ${targetName}
                      APPEND PROPERTY INTERFACE_SYSTEM_INCLUDE_DIRECTORIES
                      ${includeDirs})
     endforeach()
@@ -342,6 +342,29 @@ else()
 endif()
 
 ################################
+# LIBROM
+################################
+if(DEFINED LIBROM_DIR)
+    message(STATUS "LIBROM_DIR = ${LIBROM_DIR}")
+
+    find_and_register(NAME librom
+                      INCLUDE_DIRECTORIES ${LIBROM_DIR}/lib
+                      LIBRARY_DIRECTORIES ${LIBROM_DIR}/build/lib
+                      HEADER librom.h
+                      LIBRARIES ROM)
+
+    set(ENABLE_LIBROM ON CACHE BOOL "")
+    set(thirdPartyLibs ${thirdPartyLibs} librom)
+else()
+    if(ENABLE_LIBROM)
+        message(WARNING "ENABLE_LIBROM is ON but LIBROM_DIR isn't defined.")
+    endif()
+
+    set(ENABLE_LIBROM OFF CACHE BOOL "" FORCE)
+    message(STATUS "Not using LIBROM.")
+endif()
+
+################################
 # METIS
 ################################
 if(DEFINED METIS_DIR)
@@ -448,7 +471,7 @@ if(DEFINED HYPRE_DIR AND ENABLE_HYPRE)
 
     find_and_register(NAME hypre
                       INCLUDE_DIRECTORIES ${HYPRE_DIR}/include
-                      LIBRARY_DIRECTORIES ${HYPRE_DIR}/lib 
+                      LIBRARY_DIRECTORIES ${HYPRE_DIR}/lib
                       HEADER HYPRE.h
                       LIBRARIES HYPRE
                       EXTRA_LIBRARIES ${EXTRA_LIBS}
@@ -462,7 +485,7 @@ if(DEFINED HYPRE_DIR AND ENABLE_HYPRE)
     # else()
     #   set(ENABLE_HYPRE ON CACHE BOOL "")
     # endif()
-    
+
     set(ENABLE_HYPRE ON CACHE BOOL "")
     set(thirdPartyLibs ${thirdPartyLibs} hypre)
 else()
@@ -479,15 +502,15 @@ endif()
 ################################
 if(DEFINED TRILINOS_DIR AND ENABLE_TRILINOS)
     message(STATUS "TRILINOS_DIR = ${TRILINOS_DIR}")
-  
+
     include(${TRILINOS_DIR}/lib/cmake/Trilinos/TrilinosConfig.cmake)
-  
+
     list(REMOVE_ITEM Trilinos_LIBRARIES "gtest")
     list(REMOVE_DUPLICATES Trilinos_LIBRARIES)
 
     blt_import_library(NAME trilinos
                          DEPENDS_ON ${TRILINOS_DEPENDS}
-                         INCLUDES ${Trilinos_INCLUDE_DIRS} 
+                         INCLUDES ${Trilinos_INCLUDE_DIRS}
                          LIBRARIES ${Trilinos_LIBRARIES}
                          TREAT_INCLUDES_AS_SYSTEM ON)
 
@@ -543,12 +566,12 @@ if(DEFINED VTK_DIR)
     foreach( targetName ${VTK_TARGETS} )
 
         get_target_property( includeDirs ${targetName}  INTERFACE_INCLUDE_DIRECTORIES)
-    
-        set_property(TARGET ${targetName} 
+
+        set_property(TARGET ${targetName}
                      APPEND PROPERTY INTERFACE_SYSTEM_INCLUDE_DIRECTORIES
                      ${includeDirs})
     endforeach()
-    
+
     set(ENABLE_VTK ON CACHE BOOL "")
     set(thirdPartyLibs ${thirdPartyLibs} vtk)
 else()

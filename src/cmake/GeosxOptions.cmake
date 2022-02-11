@@ -29,6 +29,8 @@ option( ENABLE_XML_UPDATES "" ON )
 
 option( ENABLE_FORTRAN "Enables Fortran support" OFF )
 
+option( ENABLE_LIBROM "Enables LIBROM" OFF )
+
 option( ENABLE_METIS "Enables METIS" ON )
 option( ENABLE_PARMETIS "Enables PARMETIS" ON )
 
